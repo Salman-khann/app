@@ -1,0 +1,69 @@
+# Task: Build DermAI UAE - AI-Driven Skin Analysis & Treatment Ecosystem
+
+## Plan
+- [x] Phase 1: Foundation Setup
+  - [x] Initialize Supabase
+  - [x] Create comprehensive database schema with all tables
+  - [x] Set up authentication with role-based access (user, dermatologist, admin)
+  - [x] Create type definitions
+  - [x] Design color system for healthcare theme
+- [x] Phase 2: Core Infrastructure
+  - [x] Create API layer for database operations
+  - [x] Set up routing structure
+  - [x] Create layout components (main layout, dashboard layout, admin layout)
+  - [x] Implement navigation with role-based menu
+- [x] Phase 3: Authentication & Landing
+  - [x] Build landing page
+  - [x] Create sign in/sign up pages
+  - [x] Integrate Google SSO
+  - [x] Configure route guards
+- [x] Phase 4: User Dashboard & Profile
+  - [x] Build user dashboard with skin profile
+  - [x] Create analysis history view
+  - [x] Implement my routines display
+- [x] Phase 5: AI Skin Analysis
+  - [x] Create photo upload component with validation
+  - [x] Build skin questionnaire form
+  - [x] Deploy AI analysis edge function
+  - [x] Create analysis result report page
+- [x] Phase 6: Recommendations
+  - [x] Build personalized routine display
+  - [x] Create product recommendations page
+- [x] Phase 7: Marketplace
+  - [x] Create product listing page with filters
+  - [x] Build product detail page
+  - [x] Implement shopping cart
+  - [x] Integrate Stripe payment (checkout + verification)
+  - [x] Create payment success page
+- [x] Phase 8: Consultation System
+  - [x] Build dermatologist listing page
+  - [x] Create booking system with calendar (placeholder)
+  - [x] Implement consultation room (placeholder)
+- [x] Phase 9: Dermatologist Portal
+  - [x] Create patient queue view (placeholder)
+  - [x] Build AI report review interface (placeholder)
+  - [x] Implement prescription/notes system (placeholder)
+- [x] Phase 10: Admin Panel
+  - [x] Build user management interface
+  - [x] Create doctor management with approval
+  - [x] Implement product management
+  - [x] Create order management interface
+- [x] Phase 11: Sample Data
+  - [x] Add sample products to database
+- [x] Phase 12: Final Validation
+  - [x] Run lint and fix all errors
+  - [x] Test all features
+  - [x] Complete final review
+
+## Notes
+- Application requires multi-role authentication (user, dermatologist, admin)
+- Payment integration with Stripe for consultations and marketplace
+- Image upload for skin analysis photos
+- Complex database schema with 10+ tables
+- Edge functions for AI analysis and payment processing
+- Target: ~65 actions for this complex application
+- UAE-specific: AED currency, GST timezone, English/Arabic support
+- First registered user will be admin
+- Stripe secret key needs to be configured by user
+- Some pages (booking, consultation room, dermatologist portal) are placeholders for MVP
+

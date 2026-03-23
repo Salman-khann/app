@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { supabase } from '@/db/supabase';
 import type { User } from '@supabase/supabase-js';
-import type { Profile } from '@/types/types';
+import type { Profile } from '@/types';
 import { toast } from 'sonner';
 
 export async function getProfile(userId: string): Promise<Profile | null> {
@@ -21,8 +21,9 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signInWithUsername: (username: string, password: string) => Promise<{ error: Error | null }>;
-  signUpWithUsername: (username: string, password: string) => Promise<{ error: Error | null }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUpWithEmail: (email: string, password: string, role: 'user' | 'dermatologist') => Promise<{ error: Error | null }>;
+  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -74,9 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signInWithUsername = async (username: string, password: string) => {
+  const signInWithEmail = async (email: string, password: string) => {
     try {
-      const email = `${username}@miaoda.com`;
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -89,18 +89,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signUpWithUsername = async (username: string, password: string) => {
+  const signUpWithEmail = async (email: string, password: string, role: 'user' | 'dermatologist') => {
     try {
-      const email = `${username}@miaoda.com`;
       const { error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            role,
+          },
+        },
       });
 
       if (error) throw error;
       return { error: null };
     } catch (error) {
       return { error: error as Error };
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    const { data, error } = await supabase.auth.signInWithSSO({
+      domain: 'miaoda-gg.com',
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    if (error) {
+      toast.error(`Google sign in failed: ${error.message}`);
+    } else if (data?.url) {
+      window.open(data.url, '_self');
     }
   };
 
@@ -111,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithUsername, signUpWithUsername, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{ user, profile, loading, signInWithEmail, signUpWithEmail, signInWithGoogle, signOut, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );

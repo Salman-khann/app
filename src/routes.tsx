@@ -1,5 +1,24 @@
-import SamplePage from './pages/SamplePage';
 import type { ReactNode } from 'react';
+import { lazy } from 'react';
+
+const LandingPage = lazy(() => import('./pages/LandingPage'));
+const SignInPage = lazy(() => import('./pages/SignInPage'));
+const SignUpPage = lazy(() => import('./pages/SignUpPage'));
+const UserDashboard = lazy(() => import('./pages/UserDashboard'));
+const AIAnalysisPage = lazy(() => import('./pages/AIAnalysisPage'));
+const AnalysisResultPage = lazy(() => import('./pages/AnalysisResultPage'));
+const RecommendationsPage = lazy(() => import('./pages/RecommendationsPage'));
+const DoctorsPage = lazy(() => import('./pages/DoctorsPage'));
+const BookingPage = lazy(() => import('./pages/BookingPage'));
+const ConsultationRoomPage = lazy(() => import('./pages/ConsultationRoomPage'));
+const ProductsPage = lazy(() => import('./pages/ProductsPage'));
+const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
+const CartPage = lazy(() => import('./pages/CartPage'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage'));
+const DermatologistPortal = lazy(() => import('./pages/DermatologistPortal'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 interface RouteConfig {
   name: string;
@@ -10,10 +29,113 @@ interface RouteConfig {
 
 const routes: RouteConfig[] = [
   {
-    name: 'Sample Page',
+    name: 'Home',
     path: '/',
-    element: <SamplePage />
-  }
+    element: <LandingPage />,
+    visible: true,
+  },
+  {
+    name: 'Sign In',
+    path: '/login',
+    element: <SignInPage />,
+    visible: false,
+  },
+  {
+    name: 'Sign Up',
+    path: '/signup',
+    element: <SignUpPage />,
+    visible: false,
+  },
+  {
+    name: 'Dashboard',
+    path: '/dashboard',
+    element: <UserDashboard />,
+    visible: false,
+  },
+  {
+    name: 'AI Analysis',
+    path: '/analysis',
+    element: <AIAnalysisPage />,
+    visible: true,
+  },
+  {
+    name: 'Analysis Result',
+    path: '/analysis/:id',
+    element: <AnalysisResultPage />,
+    visible: false,
+  },
+  {
+    name: 'Recommendations',
+    path: '/recommendations',
+    element: <RecommendationsPage />,
+    visible: false,
+  },
+  {
+    name: 'Doctors',
+    path: '/doctors',
+    element: <DoctorsPage />,
+    visible: true,
+  },
+  {
+    name: 'Book Consultation',
+    path: '/doctors/:id/book',
+    element: <BookingPage />,
+    visible: false,
+  },
+  {
+    name: 'Consultation Room',
+    path: '/consultation/:id',
+    element: <ConsultationRoomPage />,
+    visible: false,
+  },
+  {
+    name: 'Products',
+    path: '/products',
+    element: <ProductsPage />,
+    visible: true,
+  },
+  {
+    name: 'Product Detail',
+    path: '/products/:id',
+    element: <ProductDetailPage />,
+    visible: false,
+  },
+  {
+    name: 'Cart',
+    path: '/cart',
+    element: <CartPage />,
+    visible: false,
+  },
+  {
+    name: 'Checkout',
+    path: '/checkout',
+    element: <CheckoutPage />,
+    visible: false,
+  },
+  {
+    name: 'Payment Success',
+    path: '/payment-success',
+    element: <PaymentSuccessPage />,
+    visible: false,
+  },
+  {
+    name: 'Dermatologist Portal',
+    path: '/dermatologist',
+    element: <DermatologistPortal />,
+    visible: false,
+  },
+  {
+    name: 'Admin Panel',
+    path: '/admin',
+    element: <AdminPanel />,
+    visible: false,
+  },
+  {
+    name: 'Not Found',
+    path: '/404',
+    element: <NotFound />,
+    visible: false,
+  },
 ];
 
 export default routes;
