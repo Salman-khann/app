@@ -18,8 +18,15 @@ export default function SignUpPage() {
   const { signUpWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
+  const isValidEmail = (value: string) => /^\S+@\S+\.\S+$/.test(value.trim());
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!isValidEmail(email)) {
+      toast.error('Please enter a valid email address like name@example.com');
+      return;
+    }
 
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
@@ -33,13 +40,17 @@ export default function SignUpPage() {
 
     setLoading(true);
 
-    const { error } = await signUpWithEmail(email, password, role);
+    const { error, requiresEmailConfirmation } = await signUpWithEmail(email, password, role);
 
     if (error) {
       toast.error(error.message);
       setLoading(false);
     } else {
-      toast.success('Account created successfully! You can now sign in.');
+      if (requiresEmailConfirmation) {
+        toast.success('Account created. Please verify your email before signing in.');
+      } else {
+        toast.success('Account created successfully! You can now sign in.');
+      }
       navigate('/login');
     }
   };

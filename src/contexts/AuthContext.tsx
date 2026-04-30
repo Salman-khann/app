@@ -4,6 +4,32 @@ import type { User } from '@supabase/supabase-js';
 import type { Profile } from '@/types';
 import { toast } from 'sonner';
 
+function normalizeAuthError(error: unknown, action: string) {
+  if (error instanceof Error) {
+    const message = error.message.toLowerCase();
+    if (message.includes('over_email_send_rate_limit')) {
+      return new Error(
+        `Supabase is temporarily rate-limiting signup emails. Try again later, disable email confirmation in Supabase, or use a different test email after the limit resets.`,
+      );
+    }
+
+    if (message.includes('invalid email')) {
+      return new Error('Please enter a valid email address like name@example.com.');
+    }
+
+    if (message.includes('failed to fetch') || message.includes('networkerror') || message.includes('load failed')) {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      return new Error(
+        `Cannot reach Supabase while trying to ${action}. Check that VITE_SUPABASE_URL is correct, the project is active, and your network can resolve ${supabaseUrl}.`,
+      );
+    }
+
+    return error;
+  }
+
+  return new Error(`Unable to ${action}. Please try again.`);
+}
+
 export async function getProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase
     .from('profiles')
@@ -22,7 +48,7 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUpWithEmail: (email: string, password: string, role: 'user' | 'dermatologist') => Promise<{ error: Error | null }>;
+  signUpWithEmail: (email: string, password: string, role: 'user' | 'dermatologist') => Promise<{ error: Error | null; requiresEmailConfirmation?: boolean }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -85,16 +111,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       return { error: null };
     } catch (error) {
-      return { error: error as Error };
+      return { error: normalizeAuthError(error, 'sign in with email and password') };
     }
   };
 
   const signUpWithEmail = async (email: string, password: string, role: 'user' | 'dermatologist') => {
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
+      const normalizedEmail = email.trim().toLowerCase();
+      const { data, error } = await supabase.auth.signUp({
+        email: normalizedEmail,
         password,
         options: {
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             role,
           },
@@ -102,24 +130,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (error) throw error;
-      return { error: null };
+
+      // Supabase returns no session when email confirmation is required.
+      return { error: null, requiresEmailConfirmation: !data.session };
     } catch (error) {
-      return { error: error as Error };
+      return { error: normalizeAuthError(error, 'create your account') };
     }
   };
 
   const signInWithGoogle = async () => {
-    const { data, error } = await supabase.auth.signInWithSSO({
-      domain: 'miaoda-gg.com',
-      options: {
-        redirectTo: window.location.origin,
-      },
-    });
+    const redirectTo = window.location.origin;
+    const googleDomain = import.meta.env.VITE_SUPABASE_GOOGLE_DOMAIN?.trim();
+
+    const authResult = googleDomain
+      ? await supabase.auth.signInWithSSO({
+          domain: googleDomain,
+          options: {
+            redirectTo,
+          },
+        })
+      : await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo,
+          },
+        });
+
+    const { data, error } = authResult;
 
     if (error) {
-      toast.error(`Google sign in failed: ${error.message}`);
+      toast.error(`Google sign in failed: ${normalizeAuthError(error, 'sign in with Google').message}`);
     } else if (data?.url) {
-      window.open(data.url, '_self');
+      window.location.assign(data.url);
     }
   };
 
