@@ -24,6 +24,10 @@ export default function Header() {
   useEffect(() => {
     if (user) {
       loadCartCount();
+      
+      // Listen for cart updates from other components
+      window.addEventListener('cart-updated', loadCartCount);
+      return () => window.removeEventListener('cart-updated', loadCartCount);
     }
   }, [user]);
 

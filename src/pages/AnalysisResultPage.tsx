@@ -105,7 +105,7 @@ export default function AnalysisResultPage() {
         )}
 
         <div className="flex gap-4">
-          <Button onClick={() => navigate('/recommendations')}>
+          <Button onClick={() => navigate('/recommendations', { state: { analysisId: analysis.id } })}>
             View Recommendations
           </Button>
           <Button variant="outline" onClick={() => navigate('/doctors')}>

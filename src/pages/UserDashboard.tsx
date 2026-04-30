@@ -41,18 +41,18 @@ export default function UserDashboard() {
 
   const handleUpdateProfile = async () => {
     if (!user) return;
-    const success = await updateProfile(user.id, {
+    const result = await updateProfile(user.id, {
       full_name: fullName || null,
       age: age ? parseInt(age) : null,
       location: location || null,
       known_allergies: allergies ? allergies.split(',').map((a: string) => a.trim()) : null,
     });
 
-    if (success) {
+    if (result.success) {
       toast.success('Profile updated successfully');
       await refreshProfile();
     } else {
-      toast.error('Failed to update profile');
+      toast.error(result.errorMessage || 'Failed to update profile');
     }
   };
 

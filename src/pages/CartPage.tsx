@@ -18,6 +18,8 @@ export default function CartPage() {
   useEffect(() => {
     if (user) {
       loadCart();
+      window.addEventListener('cart-updated', loadCart);
+      return () => window.removeEventListener('cart-updated', loadCart);
     } else {
       setLoading(false);
     }

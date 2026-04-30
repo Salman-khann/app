@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { Upload, Loader2, Camera } from 'lucide-react';
 import { supabase } from '@/db/supabase';
 
+const skinAnalysisBucket = import.meta.env.VITE_SUPABASE_SKIN_ANALYSIS_BUCKET || 'skin_analysis_images';
+
 export default function AIAnalysisPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -60,13 +62,13 @@ export default function AIAnalysisPage() {
         const fileExt = photoFile.name.split('.').pop();
         const fileName = `${user.id}/${Date.now()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage
-          .from('app-agw53ovmohdt_skin_analysis_images')
+          .from(skinAnalysisBucket)
           .upload(fileName, photoFile);
 
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage
-          .from('app-agw53ovmohdt_skin_analysis_images')
+          .from(skinAnalysisBucket)
           .getPublicUrl(fileName);
 
         photoUrl = urlData.publicUrl;
@@ -80,15 +82,34 @@ export default function AIAnalysisPage() {
       });
 
       if (response.error) {
-        const errorMsg = await response.error?.context?.text();
-        throw new Error(errorMsg || response.error.message);
+        const errorContext = response.error.context;
+        const errorMsg =
+          typeof errorContext?.text === 'function'
+            ? await errorContext.text()
+            : response.error.message;
+        throw new Error(errorMsg || 'Failed to analyze skin');
       }
 
       toast.success('Analysis complete!');
       navigate(`/analysis/${response.data.analysisId}`);
     } catch (error: any) {
       console.error('Analysis error:', error);
-      toast.error(error.message || 'Failed to analyze skin');
+      const message = String(error?.message || 'Failed to analyze skin');
+      if (message.toLowerCase().includes('bucket') || message.toLowerCase().includes('storage')) {
+        toast.error(
+          `Upload failed because the Supabase bucket "${skinAnalysisBucket}" does not exist or is not accessible. Create the bucket in Supabase Storage and try again.`,
+        );
+      } else if (
+        message.toLowerCase().includes('edge function') ||
+        message.toLowerCase().includes('failed to send a req') ||
+        message.toLowerCase().includes('fetch')
+      ) {
+        toast.error(
+          'The analyze_skin edge function is not reachable. Deploy the function to the new Supabase project and make sure SUPABASE_SERVICE_ROLE_KEY is configured in the function secrets.',
+        );
+      } else {
+        toast.error(message || 'Failed to analyze skin');
+      }
     } finally {
       setLoading(false);
     }

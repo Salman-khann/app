@@ -3,6 +3,7 @@ import { supabase } from '@/db/supabase';
 import type { User } from '@supabase/supabase-js';
 import type { Profile } from '@/types';
 import { toast } from 'sonner';
+import { ensureProfileForUser } from '@/db/api';
 
 function normalizeAuthError(error: unknown, action: string) {
   if (error instanceof Error) {
@@ -43,6 +44,15 @@ export async function getProfile(userId: string): Promise<Profile | null> {
   }
   return data;
 }
+
+async function syncProfile(user: User): Promise<Profile | null> {
+  const existingProfile = await getProfile(user.id);
+  if (existingProfile) {
+    return existingProfile;
+  }
+
+  return ensureProfileForUser(user);
+}
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
@@ -67,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const profileData = await getProfile(user.id);
+    const profileData = await syncProfile(user);
     setProfile(profileData);
   };
 
@@ -78,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .then(({ data: { session } }) => {
         setUser(session?.user ?? null);
         if (session?.user) {
-          getProfile(session.user.id).then(setProfile);
+          syncProfile(session.user).then(setProfile);
         }
       })
       .catch(error => {
@@ -92,7 +102,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        getProfile(session.user.id).then(setProfile);
+        syncProfile(session.user).then(setProfile);
       } else {
         setProfile(null);
       }
