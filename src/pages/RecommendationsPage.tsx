@@ -35,8 +35,7 @@ export default function RecommendationsPage() {
       
       // If no analysisId from state, get the latest one
       if (!targetAnalysisId) {
-        const analyses = await getSkinAnalysis(user.id); // This actually fetches by ID in api.ts, wait
-        // Check api.ts again: getSkinAnalyses(userId)
+        const analyses = await getSkinAnalysis(user.id); 
         const userAnalyses = await (await import('@/db/api')).getSkinAnalyses(user.id);
         if (userAnalyses && userAnalyses.length > 0) {
           targetAnalysisId = userAnalyses[0].id;
@@ -59,7 +58,6 @@ export default function RecommendationsPage() {
           setRecommendedProducts(products.slice(0, 4));
         }
       } else {
-        // Try to get active routine if no analysis
         const activeRoutine = await getActiveRoutine(user.id);
         setRoutine(activeRoutine);
       }
@@ -70,8 +68,6 @@ export default function RecommendationsPage() {
       setLoading(false);
     }
   };
-
-
 
   if (loading) {
     return (
@@ -111,7 +107,6 @@ export default function RecommendationsPage() {
       </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Routine */}
         <div className="lg:col-span-2 space-y-8">
           <Card className="overflow-hidden border-none shadow-xl bg-gradient-to-br from-background to-muted/30">
             <CardHeader className="border-b bg-muted/20 pb-6">
@@ -204,7 +199,6 @@ export default function RecommendationsPage() {
           </Card>
         </div>
 
-        {/* Right Column: AI Insights & Products */}
         <div className="space-y-8">
           <Card className="border-primary/20 bg-primary/5">
             <CardHeader>
@@ -238,44 +232,41 @@ export default function RecommendationsPage() {
             </CardContent>
           </Card>
 
-            <h3 className="text-xl font-bold">
-              Recommended Products
-            </h3>
-            
-            <div className="space-y-4">
-              {recommendedProducts.map((product) => (
-                <motion.div 
-                  key={product.id}
-                  whileHover={{ y: -4 }}
-                  className="group"
-                >
-                  <Card className="overflow-hidden border-muted hover:border-primary/30 transition-all duration-300">
-                    <div className="flex h-24">
-                      <div 
-                        className="w-24 bg-muted overflow-hidden"
-                      >
-                        {product.image_urls?.[0] ? (
-                          <img src={product.image_urls[0]} alt={product.name} className="h-full w-full object-cover" />
-                        ) : (
-                          <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                            <span className="text-xs">No Image</span>
-                          </div>
-                        )}
+          <h3 className="text-xl font-bold">
+            Recommended Products
+          </h3>
+          
+          <div className="space-y-4">
+            {recommendedProducts.map((product) => (
+              <motion.div 
+                key={product.id}
+                whileHover={{ y: -4 }}
+                className="group"
+              >
+                <Card className="overflow-hidden border-muted hover:border-primary/30 transition-all duration-300">
+                  <div className="flex h-24">
+                    <div className="w-24 bg-muted overflow-hidden">
+                      {product.image_urls?.[0] ? (
+                        <img src={product.image_urls[0]} alt={product.name} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                          <span className="text-xs">No Image</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 p-3 flex flex-col justify-between">
+                      <div>
+                        <h5 className="text-sm font-bold truncate group-hover:text-primary transition-colors">{product.name}</h5>
+                        <p className="text-[10px] text-muted-foreground">{product.brand}</p>
                       </div>
-                      <div className="flex-1 p-3 flex flex-col justify-between">
-                        <div>
-                          <h5 className="text-sm font-bold truncate group-hover:text-primary transition-colors">{product.name}</h5>
-                          <p className="text-[10px] text-muted-foreground">{product.brand}</p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-sm font-bold text-primary">{product.price_aed} AED</span>
-                        </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-bold text-primary">{product.price_aed} AED</span>
                       </div>
                     </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
           </div>
 
           <Card className="bg-muted/30 border-dashed">
