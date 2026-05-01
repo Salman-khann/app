@@ -11,11 +11,7 @@ const RecommendationsPage = lazy(() => import('./pages/RecommendationsPage'));
 const DoctorsPage = lazy(() => import('./pages/DoctorsPage'));
 const BookingPage = lazy(() => import('./pages/BookingPage'));
 const ConsultationRoomPage = lazy(() => import('./pages/ConsultationRoomPage'));
-const ProductsPage = lazy(() => import('./pages/ProductsPage'));
-const ProductDetailPage = lazy(() => import('./pages/ProductDetailPage'));
-const CartPage = lazy(() => import('./pages/CartPage'));
-const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
-const PaymentSuccessPage = lazy(() => import('./pages/PaymentSuccessPage'));
+
 const DermatologistPortal = lazy(() => import('./pages/DermatologistPortal'));
 const AdminPanel = lazy(() => import('./pages/AdminPanel'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -88,36 +84,7 @@ const routes: RouteConfig[] = [
     element: <ConsultationRoomPage />,
     visible: false,
   },
-  {
-    name: 'Products',
-    path: '/products',
-    element: <ProductsPage />,
-    visible: true,
-  },
-  {
-    name: 'Product Detail',
-    path: '/products/:id',
-    element: <ProductDetailPage />,
-    visible: false,
-  },
-  {
-    name: 'Cart',
-    path: '/cart',
-    element: <CartPage />,
-    visible: false,
-  },
-  {
-    name: 'Checkout',
-    path: '/checkout',
-    element: <CheckoutPage />,
-    visible: false,
-  },
-  {
-    name: 'Payment Success',
-    path: '/payment-success',
-    element: <PaymentSuccessPage />,
-    visible: false,
-  },
+
   {
     name: 'Dermatologist Portal',
     path: '/dermatologist',

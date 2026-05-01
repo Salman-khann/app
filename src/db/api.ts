@@ -9,11 +9,140 @@ import type {
   ProductRecommendation,
   Consultation,
   Prescription,
-  Order,
-  CartItem,
-  OrderItem,
-  DeliveryAddress,
 } from '@/types';
+
+const MOCK_DOCTORS: Record<string, any> = {
+  'mock-doctor-1': {
+    id: 'mock-doctor-1',
+    specialization: 'Clinical Dermatology',
+    years_experience: 12,
+    languages: ['English', 'Arabic'],
+    consultation_fee: 350,
+    clinic_emirate: 'Dubai',
+    photo_url: 'https://images.unsplash.com/photo-1559839734-2b71f153678f?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Sarah Ahmed',
+    }
+  },
+  'mock-doctor-2': {
+    id: 'mock-doctor-2',
+    specialization: 'Cosmetic Dermatology',
+    years_experience: 8,
+    languages: ['English', 'French'],
+    consultation_fee: 450,
+    clinic_emirate: 'Abu Dhabi',
+    photo_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Marcus Chen',
+    }
+  },
+  'mock-doctor-3': {
+    id: 'mock-doctor-3',
+    specialization: 'Pediatric Dermatology',
+    years_experience: 15,
+    languages: ['English', 'Spanish'],
+    consultation_fee: 400,
+    clinic_emirate: 'Dubai',
+    photo_url: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Elena Rodriguez',
+    }
+  },
+  'mock-doctor-4': {
+    id: 'mock-doctor-4',
+    specialization: 'Dermatopathology',
+    years_experience: 20,
+    languages: ['English'],
+    consultation_fee: 500,
+    clinic_emirate: 'Sharjah',
+    photo_url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. James Wilson',
+    }
+  },
+  'mock-doctor-5': {
+    id: 'mock-doctor-5',
+    specialization: 'Surgical Dermatology',
+    years_experience: 10,
+    languages: ['Arabic', 'English'],
+    consultation_fee: 600,
+    clinic_emirate: 'Abu Dhabi',
+    photo_url: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Fatima Al Hashimi',
+    }
+  },
+  'mock-doctor-6': {
+    id: 'mock-doctor-6',
+    specialization: 'Laser & Aesthetics',
+    years_experience: 7,
+    languages: ['English', 'Korean'],
+    consultation_fee: 550,
+    clinic_emirate: 'Dubai',
+    photo_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Robert Kim',
+    }
+  },
+  'mock-doctor-7': {
+    id: 'mock-doctor-7',
+    specialization: 'General Dermatology',
+    years_experience: 14,
+    languages: ['English', 'Urdu', 'Hindi'],
+    consultation_fee: 300,
+    clinic_emirate: 'Ajman',
+    photo_url: 'https://images.unsplash.com/photo-1559839734-2b71f153678f?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Aisha Malik',
+    }
+  },
+  'mock-doctor-8': {
+    id: 'mock-doctor-8',
+    specialization: 'Immunodermatology',
+    years_experience: 18,
+    languages: ['English', 'German'],
+    consultation_fee: 480,
+    clinic_emirate: 'Dubai',
+    photo_url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. David Miller',
+    }
+  },
+  'mock-doctor-9': {
+    id: 'mock-doctor-9',
+    specialization: 'Trichology',
+    years_experience: 9,
+    languages: ['Arabic', 'English'],
+    consultation_fee: 380,
+    clinic_emirate: 'Ras Al Khaimah',
+    photo_url: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Noor Al Mansoori',
+    }
+  },
+  'mock-doctor-10': {
+    id: 'mock-doctor-10',
+    specialization: 'Photodermatology',
+    years_experience: 11,
+    languages: ['English'],
+    consultation_fee: 420,
+    clinic_emirate: 'Fujairah',
+    photo_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop',
+    verification_status: 'approved',
+    profile: {
+      full_name: 'Dr. Thomas Brown',
+    }
+  }
+};
 
 export async function ensureProfileForUser(user: User): Promise<Profile | null> {
   const role = (user.user_metadata?.role as Profile['role'] | undefined) ?? 'user';
@@ -113,35 +242,7 @@ export async function getAllUsers(limit = 50, offset = 0) {
 export async function getDermatologistProfile(userId: string) {
   // Check for mock IDs first
   if (userId.startsWith('mock-doctor-')) {
-    const mockDoctors: Record<string, any> = {
-      'mock-doctor-1': {
-        id: 'mock-doctor-1',
-        specialization: 'Clinical Dermatology',
-        years_experience: 12,
-        languages: ['English', 'Arabic'],
-        consultation_fee: 350,
-        clinic_emirate: 'Dubai',
-        photo_url: 'https://images.unsplash.com/photo-1559839734-2b71f153678f?q=80&w=400&auto=format&fit=crop',
-        verification_status: 'approved',
-        profile: {
-          full_name: 'Dr. Sarah Ahmed',
-        }
-      },
-      'mock-doctor-2': {
-        id: 'mock-doctor-2',
-        specialization: 'Cosmetic Dermatology',
-        years_experience: 8,
-        languages: ['English', 'French'],
-        consultation_fee: 450,
-        clinic_emirate: 'Abu Dhabi',
-        photo_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop',
-        verification_status: 'approved',
-        profile: {
-          full_name: 'Dr. Marcus Chen',
-        }
-      }
-    };
-    return mockDoctors[userId] || null;
+    return MOCK_DOCTORS[userId] || null;
   }
 
   const { data, error } = await supabase
@@ -185,34 +286,17 @@ export async function getApprovedDermatologists(filters?: {
   
   if (!data || data.length === 0) {
     // Return mock data for demo purposes if DB is empty
-    return [
-      {
-        id: 'mock-doctor-1',
-        specialization: 'Clinical Dermatology',
-        years_experience: 12,
-        languages: ['English', 'Arabic'],
-        consultation_fee: 350,
-        clinic_emirate: 'Dubai',
-        photo_url: 'https://images.unsplash.com/photo-1559839734-2b71f153678f?q=80&w=400&auto=format&fit=crop',
-        verification_status: 'approved',
-        profile: {
-          full_name: 'Dr. Sarah Ahmed',
-        }
-      },
-      {
-        id: 'mock-doctor-2',
-        specialization: 'Cosmetic Dermatology',
-        years_experience: 8,
-        languages: ['English', 'French'],
-        consultation_fee: 450,
-        clinic_emirate: 'Abu Dhabi',
-        photo_url: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop',
-        verification_status: 'approved',
-        profile: {
-          full_name: 'Dr. Marcus Chen',
-        }
-      }
-    ];
+    let mockData = Object.values(MOCK_DOCTORS);
+
+    if (filters?.emirate) {
+      mockData = mockData.filter((d) => d.clinic_emirate === filters.emirate);
+    }
+
+    if (filters?.language) {
+      mockData = mockData.filter((d) => d.languages?.includes(filters.language));
+    }
+
+    return mockData;
   }
   
   return data || [];
@@ -358,6 +442,7 @@ export async function createSkincareRoutine(
   }
   return true;
 }
+
 
 // Product operations
 export async function getProducts(filters?: {
@@ -522,42 +607,6 @@ export async function getAllProducts() {
   return data || [];
 }
 
-export async function createProduct(product: Partial<Product>): Promise<boolean> {
-  const { error } = await supabase.from('products').insert(product);
-
-  if (error) {
-    console.error('Error creating product:', error);
-    return false;
-  }
-  return true;
-}
-
-export async function updateProduct(productId: string, updates: Partial<Product>): Promise<boolean> {
-  const { error } = await supabase
-    .from('products')
-    .update(updates)
-    .eq('id', productId);
-
-  if (error) {
-    console.error('Error updating product:', error);
-    return false;
-  }
-  return true;
-}
-
-export async function deleteProduct(productId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', productId);
-
-  if (error) {
-    console.error('Error deleting product:', error);
-    return false;
-  }
-  return true;
-}
-
 // Product recommendations
 export async function getProductRecommendations(userId: string, analysisId: string) {
   const { data, error } = await supabase
@@ -576,321 +625,3 @@ export async function getProductRecommendations(userId: string, analysisId: stri
 
 // Consultation operations
 export async function createConsultation(consultation: Partial<Consultation>): Promise<string | null> {
-  // Mock success for demo dermatologists
-  if (consultation.dermatologist_id?.startsWith('mock-doctor-')) {
-    console.log('Mock consultation created successfully');
-    return `mock-cons-${Date.now()}`;
-  }
-
-  const { data, error } = await supabase
-    .from('consultations')
-    .insert(consultation)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error creating consultation:', error);
-    // Even if DB fails, return a mock ID for the demo if it's a test environment
-    return `mock-cons-fallback-${Date.now()}`;
-  }
-  return data.id;
-}
-
-export async function getUserConsultations(userId: string) {
-  const { data, error } = await supabase
-    .from('consultations')
-    .select('*, dermatologist:dermatologist_profiles(*, profile:profiles(*))')
-    .eq('user_id', userId)
-    .order('scheduled_time', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching user consultations:', error);
-    return [];
-  }
-  return data || [];
-}
-
-export async function getDermatologistConsultations(dermatologistId: string) {
-  const { data, error } = await supabase
-    .from('consultations')
-    .select('*, user:profiles!consultations_user_id_fkey(*), analysis:skin_analyses(*)')
-    .eq('dermatologist_id', dermatologistId)
-    .order('scheduled_time', { ascending: true });
-
-  if (error) {
-    console.error('Error fetching dermatologist consultations:', error);
-    return [];
-  }
-  return data || [];
-}
-
-export async function getConsultation(consultationId: string) {
-  const { data, error } = await supabase
-    .from('consultations')
-    .select('*, dermatologist:dermatologist_profiles(*, profile:profiles(*)), analysis:skin_analyses(*)')
-    .eq('id', consultationId)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Error fetching consultation:', error);
-    return null;
-  }
-  return data;
-}
-
-export async function updateConsultation(
-  consultationId: string,
-  updates: Partial<Consultation>
-): Promise<boolean> {
-  const { error } = await supabase
-    .from('consultations')
-    .update(updates)
-    .eq('id', consultationId);
-
-  if (error) {
-    console.error('Error updating consultation:', error);
-    return false;
-  }
-  return true;
-}
-
-// Prescription operations
-export async function createPrescription(prescription: Partial<Prescription>): Promise<boolean> {
-  const { error } = await supabase.from('prescriptions').insert(prescription);
-
-  if (error) {
-    console.error('Error creating prescription:', error);
-    return false;
-  }
-  return true;
-}
-
-export async function getUserPrescriptions(userId: string) {
-  const { data, error } = await supabase
-    .from('prescriptions')
-    .select('*, consultation:consultations(*), dermatologist:dermatologist_profiles(*, profile:profiles(*))')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching prescriptions:', error);
-    return [];
-  }
-  return data || [];
-}
-
-// Cart operations
-export async function getCartItems(userId: string) {
-  const { data, error } = await supabase
-    .from('cart_items')
-    .select('*, product:products(*)')
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('Error fetching cart items:', error);
-  }
-
-  // Fallback to localStorage for demo purposes if DB is empty or fails
-  const localCart = localStorage.getItem(`cart_${userId}`);
-  if (localCart) {
-    try {
-      const items = JSON.parse(localCart);
-      // Merge or return local if DB is empty
-      if (!data || data.length === 0) return items;
-    } catch (e) {
-      console.error('Error parsing local cart:', e);
-    }
-  }
-
-  return data || [];
-}
-
-export async function addToCart(userId: string, productId: string, quantity = 1): Promise<boolean> {
-  // Always update localStorage for demo persistence
-  try {
-    const localCartKey = `cart_${userId}`;
-    const localCart = JSON.parse(localStorage.getItem(localCartKey) || '[]');
-    const existingIndex = localCart.findIndex((item: any) => item.product_id === productId);
-    
-    if (existingIndex > -1) {
-      localCart[existingIndex].quantity += quantity;
-    } else {
-      const product = await getProduct(productId);
-      localCart.push({
-        id: `local-cart-${Date.now()}`,
-        user_id: userId,
-        product_id: productId,
-        quantity,
-        product: product
-      });
-    }
-    localStorage.setItem(localCartKey, JSON.stringify(localCart));
-    window.dispatchEvent(new Event('cart-updated'));
-  } catch (e) {
-    console.error('Local cart update failed:', e);
-  }
-
-  const { data: existing } = await supabase
-    .from('cart_items')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('product_id', productId)
-    .maybeSingle();
-
-  if (existing) {
-    const { error } = await supabase
-      .from('cart_items')
-      .update({ quantity: existing.quantity + quantity })
-      .eq('id', existing.id);
-
-    if (error) {
-      console.error('Error updating cart item in DB:', error);
-      return true;
-    }
-  } else {
-    const { error } = await supabase
-      .from('cart_items')
-      .insert({ user_id: userId, product_id: productId, quantity });
-
-    if (error) {
-      console.error('Error adding to cart in DB:', error.message);
-      return true;
-    }
-  }
-  return true;
-}
-
-export async function updateCartItemQuantity(
-  cartItemId: string,
-  quantity: number
-): Promise<boolean> {
-  if (quantity <= 0) {
-    return removeFromCart(cartItemId);
-  }
-
-  // Update localStorage if it exists
-  const allKeys = Object.keys(localStorage);
-  for (const key of allKeys) {
-    if (key.startsWith('cart_')) {
-      try {
-        const localCart = JSON.parse(localStorage.getItem(key) || '[]');
-        const itemIndex = localCart.findIndex((i: any) => i.id === cartItemId);
-        if (itemIndex > -1) {
-          localCart[itemIndex].quantity = quantity;
-          localStorage.setItem(key, JSON.stringify(localCart));
-          window.dispatchEvent(new Event('cart-updated'));
-          break;
-        }
-      } catch (e) {}
-    }
-  }
-
-  const { error } = await supabase
-    .from('cart_items')
-    .update({ quantity })
-    .eq('id', cartItemId);
-
-  if (error) {
-    console.error('Error updating cart item:', error);
-    return true; // Return true because we likely updated local storage or want to allow the UI to continue
-  }
-  return true;
-}
-
-export async function removeFromCart(cartItemId: string): Promise<boolean> {
-  // Update localStorage
-  const allKeys = Object.keys(localStorage);
-  for (const key of allKeys) {
-    if (key.startsWith('cart_')) {
-      try {
-        const localCart = JSON.parse(localStorage.getItem(key) || '[]');
-        const newCart = localCart.filter((i: any) => i.id !== cartItemId);
-        if (newCart.length !== localCart.length) {
-          localStorage.setItem(key, JSON.stringify(newCart));
-          window.dispatchEvent(new Event('cart-updated'));
-          break;
-        }
-      } catch (e) {}
-    }
-  }
-
-  const { error } = await supabase
-    .from('cart_items')
-    .delete()
-    .eq('id', cartItemId);
-
-  if (error) {
-    console.error('Error removing from cart:', error);
-    return true;
-  }
-  return true;
-}
-
-export async function clearCart(userId: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('cart_items')
-    .delete()
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('Error clearing cart:', error);
-    return false;
-  }
-  return true;
-}
-
-// Order operations
-export async function getUserOrders(userId: string) {
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching orders:', error);
-    return [];
-  }
-  return data || [];
-}
-
-export async function getOrder(orderId: string) {
-  const { data, error } = await supabase
-    .from('orders')
-    .select('*')
-    .eq('id', orderId)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Error fetching order:', error);
-    return null;
-  }
-  return data;
-}
-
-export async function getAllOrders(limit = 50, offset = 0) {
-  const { data, error, count } = await supabase
-    .from('orders')
-    .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
-
-  if (error) {
-    console.error('Error fetching all orders:', error);
-    return { orders: [], total: 0 };
-  }
-  return { orders: data || [], total: count || 0 };
-}
-
-export async function updateOrderStatus(orderId: string, status: string): Promise<boolean> {
-  const { error } = await supabase
-    .from('orders')
-    .update({ status })
-    .eq('id', orderId);
-
-  if (error) {
-    console.error('Error updating order status:', error);
-    return false;
-  }
-  return true;
-}

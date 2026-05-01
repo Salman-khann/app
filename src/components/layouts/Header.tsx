@@ -13,29 +13,12 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, ShoppingCart, User, LogOut, LayoutDashboard, Stethoscope, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useState, useEffect } from 'react';
-import { getCartItems } from '@/db/api';
+
 
 export default function Header() {
   const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
-  const [cartCount, setCartCount] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      loadCartCount();
-      
-      // Listen for cart updates from other components
-      window.addEventListener('cart-updated', loadCartCount);
-      return () => window.removeEventListener('cart-updated', loadCartCount);
-    }
-  }, [user]);
-
-  const loadCartCount = async () => {
-    if (!user) return;
-    const items = await getCartItems(user.id);
-    setCartCount(items.length);
-  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -46,7 +29,6 @@ export default function Header() {
     { name: 'Home', path: '/' },
     { name: 'AI Analysis', path: '/analysis' },
     { name: 'Doctors', path: '/doctors' },
-    { name: 'Products', path: '/products' },
   ];
 
   return (
@@ -74,21 +56,7 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
-          {user && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative"
-              onClick={() => navigate('/cart')}
-            >
-              <ShoppingCart className="h-5 w-5" />
-              {cartCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                  {cartCount}
-                </Badge>
-              )}
-            </Button>
-          )}
+
 
           {user ? (
             <DropdownMenu>

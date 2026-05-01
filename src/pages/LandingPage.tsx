@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Sparkles, Users, ShoppingBag, Video, CheckCircle } from 'lucide-react';
+import { Sparkles, Users, Video, CheckCircle } from 'lucide-react';
 
 export default function LandingPage() {
   const features = [
@@ -16,9 +16,9 @@ export default function LandingPage() {
       description: 'Book video or in-clinic consultations with UAE-licensed dermatologists.',
     },
     {
-      icon: ShoppingBag,
-      title: 'Curated Products',
-      description: 'Shop personalized skincare products matched to your unique skin profile.',
+      icon: CheckCircle,
+      title: 'Smart Recommendations',
+      description: 'Receive personalized skincare product suggestions matched to your unique skin profile.',
     },
     {
       icon: Users,
@@ -55,7 +55,7 @@ export default function LandingPage() {
               <span className="text-primary">UAE</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground mb-8">
-              Get personalized skin analysis, expert dermatologist consultations, and curated product recommendations — all in one platform.
+              Get personalized skin analysis, expert dermatologist consultations, and tailored product recommendations — all in one platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
@@ -126,8 +126,8 @@ export default function LandingPage() {
                 },
                 {
                   step: '4',
-                  title: 'Shop & Track Progress',
-                  description: 'Purchase recommended products and monitor your skin health journey over time.',
+                  title: 'Track Your Progress',
+                  description: 'Follow your recommended routine and monitor your skin health journey over time.',
                 },
               ].map((item, index) => (
                 <div key={index} className="flex gap-6 items-start">

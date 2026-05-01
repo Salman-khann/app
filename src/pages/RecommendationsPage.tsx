@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { getSkinAnalysis, getRoutineByAnalysis, getProducts, addToCart, getActiveRoutine } from '@/db/api';
+import { getSkinAnalysis, getRoutineByAnalysis, getProducts, getActiveRoutine } from '@/db/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
-import { Loader2, Sun, Moon, CheckCircle2, ShoppingCart, Star, ChevronRight } from 'lucide-react';
+import { Loader2, Sun, Moon, CheckCircle2, Star, ChevronRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { SkinAnalysis, SkincareRoutine, Product } from '@/types';
 
@@ -71,20 +71,7 @@ export default function RecommendationsPage() {
     }
   };
 
-  const handleAddToCart = async (productId: string) => {
-    if (!user) {
-      toast.error('Please sign in to continue');
-      navigate('/login');
-      return;
-    }
 
-    const success = await addToCart(user.id, productId);
-    if (success) {
-      toast.success('Added to cart');
-    } else {
-      toast.error('Failed to add to cart');
-    }
-  };
 
   if (loading) {
     return (
@@ -251,12 +238,8 @@ export default function RecommendationsPage() {
             </CardContent>
           </Card>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold flex items-center justify-between">
+            <h3 className="text-xl font-bold">
               Recommended Products
-              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80" onClick={() => navigate('/products')}>
-                View All <ChevronRight className="h-4 w-4 ml-1" />
-              </Button>
             </h3>
             
             <div className="space-y-4">
@@ -269,14 +252,13 @@ export default function RecommendationsPage() {
                   <Card className="overflow-hidden border-muted hover:border-primary/30 transition-all duration-300">
                     <div className="flex h-24">
                       <div 
-                        className="w-24 bg-muted overflow-hidden cursor-pointer"
-                        onClick={() => navigate(`/products/${product.id}`)}
+                        className="w-24 bg-muted overflow-hidden"
                       >
                         {product.image_urls?.[0] ? (
-                          <img src={product.image_urls[0]} alt={product.name} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <img src={product.image_urls[0]} alt={product.name} className="h-full w-full object-cover" />
                         ) : (
                           <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                            <ShoppingCart className="h-6 w-6" />
+                            <span className="text-xs">No Image</span>
                           </div>
                         )}
                       </div>
@@ -287,9 +269,6 @@ export default function RecommendationsPage() {
                         </div>
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-bold text-primary">{product.price_aed} AED</span>
-                          <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-primary hover:bg-primary/10 rounded-full" onClick={() => handleAddToCart(product.id)}>
-                            <ShoppingCart className="h-4 w-4" />
-                          </Button>
                         </div>
                       </div>
                     </div>

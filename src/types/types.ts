@@ -3,7 +3,6 @@ export type SkinType = 'oily' | 'dry' | 'combination' | 'sensitive' | 'normal';
 export type ConcernSeverity = 'mild' | 'moderate' | 'severe';
 export type ConsultationType = 'video' | 'in_clinic';
 export type ConsultationStatus = 'scheduled' | 'in_progress' | 'completed' | 'cancelled';
-export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
 export type DoctorVerificationStatus = 'pending' | 'approved' | 'rejected';
 
 export interface Profile {
@@ -134,47 +133,4 @@ export interface Prescription {
   created_at: string;
 }
 
-export interface OrderItem {
-  product_id: string;
-  name: string;
-  brand: string;
-  price_aed: number;
-  quantity: number;
-  image_url?: string;
-}
 
-export interface DeliveryAddress {
-  emirate: string;
-  area: string;
-  building: string;
-  flat: string;
-  phone: string;
-}
-
-export interface Order {
-  id: string;
-  user_id: string | null;
-  items: OrderItem[];
-  subtotal_aed: number;
-  vat_aed: number;
-  delivery_fee_aed: number;
-  total_aed: number;
-  status: OrderStatus;
-  delivery_address: DeliveryAddress | null;
-  stripe_session_id: string | null;
-  stripe_payment_intent_id: string | null;
-  customer_email: string | null;
-  customer_name: string | null;
-  completed_at: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CartItem {
-  id: string;
-  user_id: string;
-  product_id: string;
-  quantity: number;
-  created_at: string;
-  product?: Product;
-}
